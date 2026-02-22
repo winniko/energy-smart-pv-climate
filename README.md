@@ -1,5 +1,5 @@
 # energy-smart-pv-climate
-
+hhh
 # Energy Smart PV Climate – Gestione intelligente esubero fotovoltaico e climatizzazione
 
 Energy Smart PV Climate è una integrazione personalizzata per Home Assistant pensata per:
