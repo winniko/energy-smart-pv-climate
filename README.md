@@ -3,81 +3,81 @@
 ![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
 ![Home Assistant](https://img.shields.io/badge/Home%20Assistant-2024.1%2B-blueviolet.svg)
 
-**Energy Smart PV Climate** è un'integrazione per Home Assistant progettata per orchestrare il tuo impianto fotovoltaico, la batteria domestica e il sistema di climatizzazione (AC/Pompe di calore) in un unico ecosistema intelligente.
+**Energy Smart PV Climate** is a Home Assistant integration designed to orchestrate your photovoltaic system, home battery, and HVAC units into a single, intelligent ecosystem. 
 
-L'obiettivo è massimizzare l'autoconsumo, proteggere la batteria e garantire il comfort termico e igrometrico senza interventi manuali.
-
----
-
-## 🚀 Funzionalità Principali
-
-* **⚡ Gestione Surplus PV:** Attivazione automatica dei climatizzatori basata sull'eccesso di energia immessa in rete.
-* **🔋 Protezione Batteria:** Evita cicli di scarica inutili bloccando il boost se la batteria è sotto una soglia configurabile.
-* **💧 Deumidificazione Smart:** Controllo dell'umidità con isteresi e gestione intelligente per sistemi multi-split.
-* **🌡️ Offset Adattivo:** Regolazione della temperatura target in estate basata sulla temperatura esterna.
-* **🤖 Multi-Split Sync:** Algoritmo di "voto" per evitare conflitti tra unità interne che condividono la stessa unità esterna (modalità condivisa).
-* **📊 UI Dedicata:** Due card Lovelace personalizzate per il controllo granulare o centralizzato.
+The primary goal is to maximize self-consumption, protect your battery life, and maintain thermal comfort without manual intervention.
 
 ---
 
-## 🏗️ Architettura del Sistema
+## 🚀 Key Features
 
-L'integrazione crea diverse entità per ogni **Zona** (es. Soggiorno, Camera):
+* **⚡ PV Surplus Management:** Automatically triggers AC units based on excess solar energy exported to the grid.
+* **🔋 Battery Protection:** Prevents unnecessary discharge cycles by blocking boosts if the battery level is below a configurable threshold.
+* **💧 Smart Dehumidification:** Controls indoor humidity using hysteresis and intelligent logic for multi-split systems.
+* **🌡️ Adaptive Offset:** Automatically adjusts the summer target temperature based on outdoor conditions.
+* **🤖 Multi-Split Sync:** Uses a "voting" algorithm to prevent mode conflicts (e.g., heating vs cooling) on shared outdoor units.
+* **📊 Dedicated UI:** Includes two custom Lovelace cards for granular or centralized control.
 
-| Entità | Descrizione |
+---
+
+## 🏗️ System Architecture
+
+The integration creates several entities for each configured **Zone** (e.g., Living Room, Bedroom):
+
+| Entity | Description |
 | :--- | :--- |
-| `switch.<zone>_auto_mode` | Attiva/Disattiva l'automazione della zona. |
-| `select.<zone>_mode` | Selettore stagionale: `Summer`, `Winter` o `Auto`. |
-| `sensor.<zone>_status` | Stato operativo (Boosting, Charging Battery, Idle, ecc.). |
-| `sensor.<zone>_surplus_power` | Calcolo in tempo reale del surplus disponibile per la zona. |
+| `switch.<zone>_auto_mode` | Enables/disables the automation for that specific zone. |
+| `select.<zone>_mode` | Season selector: `Summer (Cooling)`, `Winter (Heating)`, or `Auto`. |
+| `sensor.<zone>_status` | Operational status (Boosting, Charging Battery, Idle, etc.). |
+| `sensor.<zone>_surplus_power` | Real-time calculation of available surplus power for the zone. |
 
 ---
 
-## 🛠️ Installazione
+## 🛠️ Installation
 
-### 1. Copia dei file
-Copia la cartella `custom_components/energy_smart_pv_climate` nella cartella `custom_components` del tuo Home Assistant.
+### 1. Copy Files
+Copy the `custom_components/energy_smart_pv_climate` folder into your Home Assistant `custom_components` directory.
 
-Copia i file delle card JS (`energy-smart-pv-card.js` e `energy-smart-pv-unified-card.js`) nella cartella `www` (es. `/config/www/energy_smart_pv/`).
+Copy the JS card files (`energy-smart-pv-card.js` and `energy-smart-pv-unified-card.js`) into your `www` folder (e.g., `/config/www/energy_smart_pv/`).
 
-### 2. Configurazione Frontend
-Aggiungi le risorse in **Impostazioni > Dashboard > Risorse**:
-* `/local/energy_smart_pv/energy-smart-pv-card.js` (Modulo JavaScript)
-* `/local/energy_smart_pv/energy-smart-pv-unified-card.js` (Modulo JavaScript)
+### 2. Frontend Configuration
+Add the following resources under **Settings > Dashboards > Resources**:
+* `/local/energy_smart_pv/energy-smart-pv-card.js` (JavaScript Module)
+* `/local/energy_smart_pv/energy-smart-pv-unified-card.js` (JavaScript Module)
 
-### 3. Setup Integrazione
-Vai su **Impostazioni > Dispositivi e Servizi > Aggiungi Integrazione** e cerca `Energy Smart PV Climate`.
-* **Prima zona:** Configura i sensori globali (Grid, Batteria, Meteo).
-* **Zone successive:** I sensori globali verranno ereditati automaticamente.
-
----
-
-## 🧠 Logica di Controllo
-
-### Gestione Energia
-* **Boost:** Si attiva se il surplus > `export_threshold`.
-* **Stop:** Si disattiva se il surplus scende sotto i 100W (con protezione anti-ciclo di 5 min).
-* **Priorità Batteria:** Se la batteria < `min_battery_level`, l'AC si spegne immediatamente per favorire la carica.
-
-### Logica Multi-Split (Smart Voting)
-Per le unità esterne condivise, il sistema gestisce i conflitti:
-1.  **Votazione:** Le zone votano tra `HEAT` e `DRY/COOL` in base all'umidità.
-2.  **Veto Invernale:** Se anche solo una zona ha il flag "Winter Dehumidification" disattivato, l'intero gruppo non entrerà in modalità deumidificazione per evitare raffreddamenti indesiderati.
+### 3. Integration Setup
+Go to **Settings > Devices & Services > Add Integration** and search for `Energy Smart PV Climate`.
+* **First Zone:** Configure global sensors (Grid, Battery, Weather).
+* **Subsequent Zones:** Global sensors are automatically inherited.
 
 ---
 
-## 🖼️ Interfaccia Grafica (Lovelace)
+## 🧠 Control Logic
+
+### Energy Management
+* **Boost:** Activates if surplus exceeds the `export_threshold`.
+* **Shutdown:** Deactivates if surplus drops below 100W (enforcing a 5-minute anti-short cycle protection).
+* **Battery Priority:** If the battery level falls below `min_battery_level`, the AC is turned off immediately to prioritize charging.
+
+### Multi-Split Logic (Smart Voting)
+For shared outdoor units, the system resolves conflicts:
+1.  **Voting:** Zones "vote" for `HEAT` or `DRY/COOL` based on local humidity sensors.
+2.  **Winter Veto:** If "Winter Dehumidification" is disabled for even one zone, the entire group is blocked from cooling/drying in winter to prevent unwanted temperature drops.
+
+---
+
+## 🖼️ User Interface (Lovelace)
 
 ### Single-Zone Card
-Dedicata al controllo di precisione di una singola stanza. Permette di regolare soglie di umidità, batteria e attivare i flag di condivisione.
+Provides detailed status for a single room, allowing you to adjust humidity thresholds, battery limits, and toggle sharing flags.
 
 ### Unified Card
-Una dashboard compatta per vedere lo stato di tutta la casa, con un "Eco Score" globale e accesso rapido ai parametri di ogni zona.
+A compact dashboard for whole-house monitoring, featuring a global "Eco Score" and quick access to all zone parameters.
 
 ---
 
-## 🤝 Contribuire
-Le pull request sono benvenute! Per modifiche importanti, apri prima un'issue per discutere cosa vorresti cambiare.
+## 🤝 Contributing
+Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
 
 ---
 
