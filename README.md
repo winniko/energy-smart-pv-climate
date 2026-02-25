@@ -65,15 +65,17 @@ For shared outdoor units, the system resolves conflicts:
 2.  **Winter Veto:** If "Winter Dehumidification" is disabled for even one zone, the entire group is blocked from cooling/drying in winter to prevent unwanted temperature drops.
 
 ---
-
 ## 🖼️ User Interface (Lovelace)
 
 ### Single-Zone Card
 Provides detailed status for a single room, allowing you to adjust humidity thresholds, battery limits, and toggle sharing flags.
 
+![Single Zone Card](images/single-card.png)
+
 ### Unified Card
 A compact dashboard for whole-house monitoring, featuring a global "Eco Score" and quick access to all zone parameters.
 
+![Unified Card](images/unified-card.png)
 ---
 
 ## 🤝 Contributing
