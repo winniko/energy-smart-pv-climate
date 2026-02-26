@@ -1,7 +1,11 @@
 # ☀️ Energy Smart PV Climate
-[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
-![Home Assistant](https://img.shields.io/badge/Home%20Assistant-2024.1%2B-blueviolet.svg)
+[![it](https://img.shields.io/badge/lang-it-green.svg)](https://github.com/winniko/energy-smart-pv-climate/blob/main/README_it.md)
+[![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/winniko/energy-smart-pv-climate/blob/main/README.md)
+
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
+[![version](https://img.shields.io/badge/version-1.0.0-blue.svg)]()
+[![maintainer](https://img.shields.io/badge/maintainer-Winniko-a--green.svg)](https://github.com/winniko/)
+
 
 **Energy Smart PV Climate** is a Home Assistant integration designed to orchestrate your photovoltaic system, home battery, and HVAC units into a single, intelligent ecosystem. 
 
