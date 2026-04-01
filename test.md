@@ -7,8 +7,6 @@ Il sistema massimizza l'autoconsumo gestendo automaticamente:
 * **Raffrescamento (Estate):** Mantiene la casa fresca sfruttando l'energia solare gratuita, con offset adattivi basati sulla temperatura esterna.
 * **Deumidificazione Intelligente:** Gestisce l'umidità in eccesso con logiche avanzate, proteggendo i sistemi multisplit da conflitti di modalità.
 
----
-
 ## ⚠️ ATTENZIONE: Card Lovelace (Frontend)
 Per mantenere il codice pulito e performante, **le interfacce grafiche personalizzate sono state separate da questa integrazione**. 
 
@@ -16,8 +14,6 @@ Per visualizzare le card (`energy-smart-pv-card` e `energy-smart-pv-unified-card
 👉 **[INSERISCI QUI IL LINK AL REPO DELLE TUE CARD JS]**
 
 *Se usi HACS, troverai il frontend aggiungendo il link sopra come repository personalizzato di tipo "Lovelace / Interfaccia".*
-
----
 
 ## 🚀 Funzionalità Principali
 
@@ -35,8 +31,6 @@ Se hai più climatizzatori configurati con la **"Deumidificazione Condivisa"**, 
 * **Inverno:** Se usi il clima in supporto ai termosifoni, il setpoint del clima diventa dinamicamente `Temperatura Termostato + Offset Boost`.
 * **Estate:** Usa un sensore di temperatura esterna per calcolare un setpoint adattivo, evitando di raffreddare troppo quando fuori non fa caldissimo.
 
----
-
 ## 🛠 Installazione
 
 ### Tramite HACS (Consigliato)
@@ -50,8 +44,6 @@ Se hai più climatizzatori configurati con la **"Deumidificazione Condivisa"**, 
 1. Scarica il repository.
 2. Copia l'intera cartella `custom_components/energy_smart_pv` all'interno della cartella `custom_components` della tua installazione di Home Assistant.
 3. Riavvia Home Assistant.
-
----
 
 ## ⚙️ Configurazione
 
@@ -67,8 +59,6 @@ L'integrazione si configura interamente da interfaccia grafica (UI). Nessun file
    * **Soglie & Temperature:** Definisci a quanti Watt far partire il sistema e le temperature base per estate/inverno.
 
 *Nota: Puoi configurare questa integrazione più volte (creando più istanze), una per ogni stanza/split della tua casa.*
-
----
 
 ## ❓ Domande Frequenti (FAQ)
 
