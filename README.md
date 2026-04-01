@@ -64,7 +64,7 @@ L'integrazione si configura interamente da interfaccia grafica (UI). Nessun file
 Per mantenere il codice pulito e performante, **le interfacce grafiche personalizzate sono state separate da questa integrazione**. 
 
 Per visualizzare le card (`energy-smart-pv-card` e `energy-smart-pv-unified-card`) nella tua dashboard, devi installare il componente frontend dedicato:
-👉 **[INSERISCI QUI IL LINK AL REPO DELLE TUE CARD JS]**
+👉 **https://github.com/winniko/energy-smart-pv-climate-card**
 
 *Se usi HACS, troverai il frontend aggiungendo il link sopra come repository personalizzato di tipo "Lovelace / Interfaccia".*
 
