@@ -83,3 +83,12 @@ Utile per chi ha sistemi multisplit con un singolo motore esterno. Se attivata s
 
 **Q: Cosa fa l'opzione "Deumidificazione in Inverno"?**
 Spesso deumidificare in inverno abbassa troppo la temperatura della stanza. Se disattivi questa spunta, quella stanza non entrerà mai in DRY. Se fa parte di un gruppo condiviso, la sua assenza funge da "Veto", bloccando la deumidificazione anche per le altre stanze del gruppo per garantire il riscaldamento.
+
+## ☕ Supporta il Progetto
+
+Ogni piccolo supporto fa un'enorme differenza: mi aiuta a mantenere vivo l'entusiasmo e mi stimola a creare e condividere nuove soluzioni per la community. Grazie di cuore per il tuo aiuto! 🚀
+
+
+
+## ❤️ Crediti
+Sviluppato da WinNiko
