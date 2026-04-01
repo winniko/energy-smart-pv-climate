@@ -14,14 +14,6 @@ Il sistema massimizza l'autoconsumo gestendo automaticamente:
 * **Raffrescamento (Estate):** Mantiene la casa fresca sfruttando l'energia solare gratuita, con offset adattivi basati sulla temperatura esterna.
 * **Deumidificazione Intelligente:** Gestisce l'umidità in eccesso con logiche avanzate, proteggendo i sistemi multisplit da conflitti di modalità.
 
-## ⚠️ ATTENZIONE: Card Lovelace (Frontend)
-Per mantenere il codice pulito e performante, **le interfacce grafiche personalizzate sono state separate da questa integrazione**. 
-
-Per visualizzare le card (`energy-smart-pv-card` e `energy-smart-pv-unified-card`) nella tua dashboard, devi installare il componente frontend dedicato:
-👉 **[INSERISCI QUI IL LINK AL REPO DELLE TUE CARD JS]**
-
-*Se usi HACS, troverai il frontend aggiungendo il link sopra come repository personalizzato di tipo "Lovelace / Interfaccia".*
-
 ## 🚀 Funzionalità Principali
 
 ### 1. Gestione Automatica Fotovoltaico e Batteria
@@ -66,6 +58,14 @@ L'integrazione si configura interamente da interfaccia grafica (UI). Nessun file
    * **Soglie & Temperature:** Definisci a quanti Watt far partire il sistema e le temperature base per estate/inverno.
 
 *Nota: Puoi configurare questa integrazione più volte (creando più istanze), una per ogni stanza/split della tua casa.*
+
+## ⚠️ ATTENZIONE: Card Lovelace (Frontend)
+Per mantenere il codice pulito e performante, **le interfacce grafiche personalizzate sono state separate da questa integrazione**. 
+
+Per visualizzare le card (`energy-smart-pv-card` e `energy-smart-pv-unified-card`) nella tua dashboard, devi installare il componente frontend dedicato:
+👉 **[INSERISCI QUI IL LINK AL REPO DELLE TUE CARD JS]**
+
+*Se usi HACS, troverai il frontend aggiungendo il link sopra come repository personalizzato di tipo "Lovelace / Interfaccia".*
 
 ## ❓ Domande Frequenti (FAQ)
 
