@@ -1,5 +1,12 @@
 # ☀️ Energy Smart PV Climate per Home Assistant
 
+[![it](https://img.shields.io/badge/lang-it-green.svg)](https://github.com/winniko/energy-smart-pv-climate/blob/main/README_it.md)
+[![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/winniko/energy-smart-pv-climate/blob/main/README.md)
+
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
+[![version](https://img.shields.io/badge/version-1.0.0-blue.svg)]()
+[![maintainer](https://img.shields.io/badge/maintainer-Winniko-a--green.svg)](https://github.com/winniko/)
+
 Questo Custom Component per Home Assistant ottimizza in modo intelligente l'uso dei tuoi climatizzatori (e termostati) basandosi sulla reale produzione del tuo impianto fotovoltaico e sullo stato della batteria di accumulo.
 
 Il sistema massimizza l'autoconsumo gestendo automaticamente:
