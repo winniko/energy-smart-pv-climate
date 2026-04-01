@@ -1,0 +1,58 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configure Energy Smart PV",
+        "description": "Select sensors and entities to control.",
+        "data": {
+          "name": "Zone Name",
+          "grid_sensor": "Grid Export Sensor",
+          "battery_sensor": "Battery Level Sensor (%)",
+          "ac_power_sensor": "AC Power Consumption Sensor (W)",
+          "climate_ac": "Air Conditioner / Split",
+          "climate_heater": "Boiler Thermostat (Optional)",
+          "export_threshold": "Export Threshold (Watt)",
+          "min_battery_level": "Minimum Battery Level (%)",
+          "summer_temp": "Summer Temperature (°C)",
+          "winter_temp": "Winter Temperature (°C)",
+          "outdoor_temp_sensor": "Outdoor Temperature Sensor (Optional)",
+          "outdoor_humidity_sensor": "Outdoor Humidity Sensor (Optional)",
+          "ac_power_sensor": "AC Power Consumption Sensor (W)",
+          "adaptive_offset": "Adaptive Offset Summer (°C)",
+          "boost_offset": "Boost Offset Winter (Split = Thermostat + X)",
+          "humidity_threshold": "Humidity Threshold for Dehumidification (%)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect",
+      "invalid_auth": "Invalid authentication",
+      "unknown": "Unknown error",
+      "already_configured": "Device is already configured"
+    },
+    "abort": {
+      "already_configured": "Device is already configured"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Energy Smart PV Options",
+        "data": {
+          "export_threshold": "Export Threshold (Watt)",
+          "min_battery_level": "Minimum Battery Level (%)",
+          "summer_temp": "Summer Temperature (°C)",
+          "winter_temp": "Winter Temperature (°C)",
+          "outdoor_temp_sensor": "Outdoor Temperature Sensor (Optional)",
+          "outdoor_humidity_sensor": "Outdoor Humidity Sensor (Optional)",
+          "adaptive_offset": "Adaptive Offset Summer (°C)",
+          "boost_offset": "Boost Offset Winter (Split = Thermostat + X)",
+          "shared_dehumidification": "Shared dehumidification between zones (multi-split)",
+          "winter_dehumidification": "Allow dehumidification in winter (group must all agree)",
+          "disable_heater_in_cool": "Turn off heater when AC is cooling/dehumidifying",
+          "humidity_threshold": "Humidity Threshold for Dehumidification (%)"
+        }
+      }
+    }
+  }
+}
