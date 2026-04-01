@@ -5,7 +5,7 @@
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
 [![version](https://img.shields.io/badge/version-1.0.0-blue.svg)]()
-[![maintainer](https://img.shields.io/badge/maintainer-Winniko-a--green.svg)](https://github.com/winniko/)
+[![maintainer](https://img.shields.io/badge/maintainer-Winniko-a--green.svg)](https://github.com/WinNiko/)
 
 Questo Custom Component per Home Assistant ottimizza in modo intelligente l'uso dei tuoi climatizzatori (e termostati) basandosi sulla reale produzione del tuo impianto fotovoltaico e sullo stato della batteria di accumulo.
 
