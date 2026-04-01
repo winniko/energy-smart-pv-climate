@@ -36,6 +36,7 @@ Se hai più climatizzatori configurati con la **"Deumidificazione Condivisa"**, 
 1. Apri **HACS** in Home Assistant.
 2. Vai su **Integrazioni** > clicca sui tre puntini in alto a destra > **Repository personalizzati**.
 3. Incolla l'URL di questo repository e scegli la categoria **Integrazione**.
+https://github.com/winniko/energy-smart-pv-climate
 4. Clicca su **Scarica**.
 5. Riavvia Home Assistant.
 
