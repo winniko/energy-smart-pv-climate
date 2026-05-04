@@ -3,7 +3,7 @@
   "name": "Energy Smart PV Climate",
   "codeowners": [],
   "config_flow": true,
-  "documentation": "https://github.com/your-repo/energy_smart_pv",
+  "documentation": "https://github.com/winniko/energy-smart-pv-climate",
   "iot_class": "local_polling",
   "version": "1.0.1",
   "requirements": []
