@@ -22,6 +22,7 @@ from .const import (
     CONF_ADAPTIVE_OFFSET,
     CONF_BOOST_OFFSET,
     CONF_DISABLE_HEATER_IN_COOL,
+    CONF_INVERT_GRID_SIGN,
     CONF_HUMIDITY_THRESHOLD,
     CONF_SHARED_DEHUM,
     CONF_WINTER_DEHUM,
@@ -36,6 +37,8 @@ from .const import (
     DEFAULT_SHARED_DEHUM,
     DEFAULT_WINTER_DEHUM,
 )
+
+DEFAULT_INVERT_GRID_SIGN = True
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -205,6 +208,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             adaptive_val = get_value(CONF_ADAPTIVE_OFFSET, DEFAULT_ADAPTIVE_OFFSET)
             boost_val = get_value(CONF_BOOST_OFFSET, DEFAULT_BOOST_OFFSET)
             disable_heater_in_cool_val = get_value(CONF_DISABLE_HEATER_IN_COOL, DEFAULT_DISABLE_HEATER_IN_COOL)
+            invert_grid_sign_val = get_value(CONF_INVERT_GRID_SIGN, DEFAULT_INVERT_GRID_SIGN)
             outdoor_val = get_value(CONF_OUTDOOR_TEMP_SENSOR, None)
             outdoor_humidity_val = get_value(CONF_OUTDOOR_HUMIDITY_SENSOR, None)
             ac_power_val = get_value(CONF_AC_POWER_SENSOR, None)
@@ -222,6 +226,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                 vol.Optional(CONF_SHARED_DEHUM, default=shared_dehum_val): cv.boolean,
                 vol.Optional(CONF_WINTER_DEHUM, default=winter_dehum_val): cv.boolean,
                 vol.Optional(CONF_DISABLE_HEATER_IN_COOL, default=disable_heater_in_cool_val): cv.boolean,
+                vol.Optional(CONF_INVERT_GRID_SIGN, default=invert_grid_sign_val): cv.boolean,
                 vol.Optional(CONF_HUMIDITY_THRESHOLD, default=humidity_val): vol.All(vol.Coerce(int), vol.Range(min=0, max=100)),
             }
 

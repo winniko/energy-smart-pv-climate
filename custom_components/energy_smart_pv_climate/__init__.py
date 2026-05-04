@@ -318,6 +318,7 @@ class EnergySmartPVManager:
         self._humidity_threshold = self._config.get(CONF_HUMIDITY_THRESHOLD, DEFAULT_HUMIDITY_THRESHOLD)
         self._shared_dehum = self._config.get(CONF_SHARED_DEHUM, DEFAULT_SHARED_DEHUM)
         self._winter_dehum = self._config.get(CONF_WINTER_DEHUM, DEFAULT_WINTER_DEHUM)
+        self._invert_grid_sign = self._config.get(CONF_INVERT_GRID_SIGN, True)
         self._current_humidity = None
         self._is_dehumidifying = False
         self._is_syncing = False  # Prevent recursion loops
@@ -478,11 +479,13 @@ class EnergySmartPVManager:
 
         try:
             raw_grid = float(grid_state.state)
-            # Invert sign: User convention is Negative = Export.
-            # We want Surplus to be Positive.
-            # -4861 (Export) -> 4861 (Surplus)
-            # +500 (Import) -> -500 (Deficit)
-            grid_power = raw_grid * -1
+            # Surplus calculation: 
+            # If invert_grid_sign is True (default): -4861 (Export) -> 4861 (Surplus)
+            # If invert_grid_sign is False: +4861 (Export) -> 4861 (Surplus)
+            if self._invert_grid_sign:
+                grid_power = raw_grid * -1
+            else:
+                grid_power = raw_grid
             
             battery_level = None
             if battery_state and battery_state.state not in (STATE_UNAVAILABLE, STATE_UNKNOWN):
@@ -1114,6 +1117,19 @@ class EnergySmartPVManager:
 
     async def set_mode(self, mode: str):
         self._mode = mode
+        
+        # If shared dehumidification is active, sync the mode to all group members
+        if self._shared_dehum:
+            try:
+                domain_managers = self.hass.data.get(DOMAIN, {})
+                for _, manager in domain_managers.items():
+                    # Only sync to other active members of the shared group
+                    if manager != self and getattr(manager, "_shared_dehum", False) and getattr(manager, "is_active", False):
+                        # Use internal _mode to avoid potential recursive loops if set_mode was a service
+                        manager._mode = mode
+                        # The next cycle of _async_check_conditions for each manager will apply the changes
+            except Exception as e:
+                _LOGGER.error("Error syncing seasonal mode to group: %s", e)
         
     @staticmethod
     async def async_update_options(hass: HomeAssistant, entry: ConfigEntry):
