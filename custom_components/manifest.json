@@ -1,5 +1,5 @@
 {
-  "domain": "energy_smart_pv",
+  "domain": "energy_smart_pv_climate",
   "name": "Energy Smart PV Climate",
   "codeowners": [],
   "config_flow": true,
