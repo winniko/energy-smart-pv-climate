@@ -1,0 +1,57 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configura Energy Smart PV Climate",
+        "description": "Seleziona i sensori e le entità da controllare.",
+        "data": {
+          "name": "Nome Zona",
+          "grid_sensor": "Sensore Potenza Immissione (Export)",
+          "battery_sensor": "Sensore Livello Batteria (%)",
+          "ac_power_sensor": "Sensore Consumo Climatizzatore (W)",
+          "climate_ac": "Condizionatore / Split (Estate & Inverno)",
+          "climate_heater": "Termostato Caldaia (Opzionale)",
+          "export_threshold": "Soglia Attivazione (Watt)",
+          "min_battery_level": "Livello Minimo Batteria (%)",
+          "summer_temp": "Temperatura Estate (°C)",
+          "winter_temp": "Temperatura Inverno (°C)",
+          "outdoor_temp_sensor": "Sensore Temperatura Esterna (Opzionale)",
+          "outdoor_humidity_sensor": "Sensore Umidità Esterna (Opzionale)",
+          "ac_power_sensor": "Sensore Consumo Climatizzatore (W)",
+          "adaptive_offset": "Offset Adattivo Estate (°C)",
+          "boost_offset": "Boost Offset Inverno (Split = Termostato + X)",
+          "humidity_threshold": "Soglia Umidità per Deumidificazione (%)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Impossibile connettersi",
+      "invalid_auth": "Autenticazione non valida",
+      "unknown": "Errore sconosciuto",
+      "already_configured": "Il dispositivo è già configurato"
+    },
+    "abort": {
+      "already_configured": "Il dispositivo è già configurato"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+          "title": "Opzioni Energy Smart PV Climate",
+        "data": {
+          "export_threshold": "Soglia Attivazione (Watt)",
+          "min_battery_level": "Livello Minimo Batteria (%)",
+          "summer_temp": "Temperatura Estate (°C)",
+          "winter_temp": "Temperatura Inverno (°C)",
+          "outdoor_temp_sensor": "Sensore Temperatura Esterna (Opzionale)",
+          "outdoor_humidity_sensor": "Sensore Umidità Esterna (Opzionale)",
+          "adaptive_offset": "Offset Adattivo Estate (°C)",
+          "boost_offset": "Boost Offset Inverno (Split = Termostato + X)",
+          "disable_heater_in_cool": "Spegni termostato quando il clima è in freddo/deumidificazione",
+          "humidity_threshold": "Soglia Umidità per Deumidificazione (%)",
+          "shared_dehumidification": "Modalità condivisa tra le zone (multi-split caldo/deumidificazione)"
+        }
+      }
+    }
+  }
+}
