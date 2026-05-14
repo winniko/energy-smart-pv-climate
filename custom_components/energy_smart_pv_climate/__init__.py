@@ -269,6 +269,10 @@ class EnergySmartPVManager:
         self._low_surplus_since = None
         self._last_condition_check = None
         self._condition_met_since = None
+        self._mode_lock = {"last_mode": None, "last_change": None, "pending_mode": None, "pending_since": None}
+        self._auto_is_winter = None
+        self._auto_pending_is_winter = None
+        self._auto_pending_since = None
         
         # Load config
         self._grid_sensor = self._config.get(CONF_GRID_SENSOR)
@@ -605,23 +609,7 @@ class EnergySmartPVManager:
             if self._is_boosting:
                 await self._async_activate_boost()
 
-        is_winter = False
-        if "Winter" in self._mode:
-            is_winter = True
-        elif self._mode == "Auto":
-            current_month = dt_util.now().month
-            is_winter = current_month >= 10 or current_month <= 4
-            if self._outdoor_sensor:
-                outdoor_state = self.hass.states.get(self._outdoor_sensor)
-                if outdoor_state and outdoor_state.state not in (STATE_UNAVAILABLE, STATE_UNKNOWN):
-                    try:
-                        out_temp = float(outdoor_state.state)
-                        if out_temp < 20:
-                            is_winter = True
-                        else:
-                            is_winter = False
-                    except ValueError:
-                        pass
+        is_winter = self._compute_is_winter()
 
         await self._async_sync_shared_group(is_winter)
 
@@ -668,19 +656,7 @@ class EnergySmartPVManager:
                     except ValueError:
                         pass
         elif self._mode == "Auto":
-            current_month = dt_util.now().month
-            is_winter = current_month >= 10 or current_month <= 4
-            if self._outdoor_sensor:
-                outdoor_state = self.hass.states.get(self._outdoor_sensor)
-                if outdoor_state and outdoor_state.state not in (STATE_UNAVAILABLE, STATE_UNKNOWN):
-                    try:
-                        out_temp = float(outdoor_state.state)
-                        if out_temp < 20:
-                            is_winter = True
-                        else:
-                            is_winter = False
-                    except ValueError:
-                        pass
+            is_winter = self._compute_is_winter()
 
             if is_winter:
                 target_mode = "heat"
@@ -848,11 +824,18 @@ class EnergySmartPVManager:
                              self._is_dehumidifying = False
 
                      if current_temp != target_temp:
-                         await self.hass.services.async_call(
-                             "climate",
-                             "set_temperature",
-                             {"entity_id": self._ac_entity, "temperature": target_temp},
-                         )
+                         try:
+                             current_val = float(current_temp) if current_temp is not None else None
+                             target_val = float(target_temp) if target_temp is not None else None
+                         except (TypeError, ValueError):
+                             current_val = None
+                             target_val = None
+                         if current_val is None or target_val is None or abs(current_val - target_val) >= 0.5:
+                             await self.hass.services.async_call(
+                                 "climate",
+                                 "set_temperature",
+                                 {"entity_id": self._ac_entity, "temperature": target_temp},
+                             )
 
         elif self._ac_entity:
             entity_id = self._ac_entity
@@ -860,20 +843,23 @@ class EnergySmartPVManager:
             if state:
                 # Set Mode if needed
                 if state.state != target_mode:
-                    await self.hass.services.async_call(
-                        "climate",
-                        "set_hvac_mode",
-                        {"entity_id": entity_id, "hvac_mode": target_mode},
-                    )
+                    await self._async_set_hvac_mode_with_limits(entity_id, target_mode)
 
                 # Set Temp if needed
                 current_temp = state.attributes.get("temperature")
                 if current_temp != target_temp:
-                    await self.hass.services.async_call(
-                        "climate",
-                        "set_temperature",
-                        {"entity_id": entity_id, "temperature": target_temp},
-                    )
+                    try:
+                        current_val = float(current_temp) if current_temp is not None else None
+                        target_val = float(target_temp) if target_temp is not None else None
+                    except (TypeError, ValueError):
+                        current_val = None
+                        target_val = None
+                    if current_val is None or target_val is None or abs(current_val - target_val) >= 0.5:
+                        await self.hass.services.async_call(
+                            "climate",
+                            "set_temperature",
+                            {"entity_id": entity_id, "temperature": target_temp},
+                        )
 
     async def _async_sync_shared_group(self, is_winter: bool):
         if not self._shared_dehum:
@@ -944,7 +930,41 @@ class EnergySmartPVManager:
                 else:
                     target_mode_for_group = "cool"
 
+            now = dt_util.utcnow()
+            group_key = self._get_shared_group_key(group)
+            lock = self._get_mode_lock(group_key)
+
+            any_needs_change = False
+            for manager in group:
+                ac_entity = getattr(manager, "_ac_entity", None)
+                if not ac_entity:
+                    continue
+                state = self.hass.states.get(ac_entity)
+                if not state:
+                    continue
+                if state.state == "off" and not getattr(manager, "is_boosting", False):
+                    continue
+                hvac_modes = state.attributes.get("hvac_modes")
+                if not hvac_modes:
+                    continue
+                final_mode = target_mode_for_group
+                if final_mode not in hvac_modes:
+                    if is_winter:
+                        final_mode = "heat" if "heat" in hvac_modes else "off"
+                    else:
+                        final_mode = "cool" if "cool" in hvac_modes else "off"
+                if state.state != final_mode:
+                    any_needs_change = True
+                    break
+
+            if not any_needs_change:
+                return
+
+            if not self._mode_change_allowed(lock, target_mode_for_group, now):
+                return
+
             # 4. Apply Winner Mode to ALL group members
+            any_changed = False
             for manager in group:
                 ac_entity = getattr(manager, "_ac_entity", None)
                 if not ac_entity:
@@ -979,6 +999,10 @@ class EnergySmartPVManager:
                         "set_hvac_mode",
                         {"entity_id": ac_entity, "hvac_mode": final_mode},
                     )
+                    any_changed = True
+
+            if any_changed:
+                self._mode_change_commit(lock, target_mode_for_group, now)
 
                 # Apply Temperature (Each unit keeps its own target temp logic, 
                 # but if we are forcing a mode change, we might need to refresh temp setting)
@@ -1000,6 +1024,114 @@ class EnergySmartPVManager:
                     "climate", "set_hvac_mode",
                     {"entity_id": entity_id, "hvac_mode": "off"}
                  )
+
+    def _get_shared_group_key(self, group):
+        try:
+            return "shared:" + ",".join(sorted([m.entry.entry_id for m in group if getattr(m, "entry", None)]))
+        except Exception:
+            return "shared:default"
+
+    def _get_mode_lock(self, key=None):
+        if key:
+            domain_data = self.hass.data.setdefault(DOMAIN, {})
+            locks = domain_data.setdefault("_mode_locks", {})
+            lock = locks.get(key)
+            if lock is None:
+                lock = {"last_mode": None, "last_change": None, "pending_mode": None, "pending_since": None}
+                locks[key] = lock
+            return lock
+        return self._mode_lock
+
+    def _mode_change_allowed(self, lock, desired_mode, now):
+        if desired_mode == "off":
+            return True
+        last_change = lock.get("last_change")
+        if last_change and (now - last_change) < timedelta(minutes=15):
+            return False
+        pending_mode = lock.get("pending_mode")
+        pending_since = lock.get("pending_since")
+        if pending_mode != desired_mode:
+            lock["pending_mode"] = desired_mode
+            lock["pending_since"] = now
+            return False
+        if pending_since and (now - pending_since) < timedelta(minutes=3):
+            return False
+        return True
+
+    def _mode_change_commit(self, lock, desired_mode, now):
+        lock["last_mode"] = desired_mode
+        lock["last_change"] = now
+        lock["pending_mode"] = None
+        lock["pending_since"] = None
+
+    async def _async_set_hvac_mode_with_limits(self, entity_id, desired_mode):
+        state = self.hass.states.get(entity_id)
+        if not state:
+            return
+        if state.state == desired_mode:
+            return
+        now = dt_util.utcnow()
+        if desired_mode != "off":
+            if not self._mode_change_allowed(self._mode_lock, desired_mode, now):
+                return
+        await self.hass.services.async_call(
+            "climate",
+            "set_hvac_mode",
+            {"entity_id": entity_id, "hvac_mode": desired_mode},
+        )
+        if desired_mode != "off":
+            self._mode_change_commit(self._mode_lock, desired_mode, now)
+
+    def _compute_is_winter(self):
+        if "Winter" in self._mode:
+            return True
+        if "Summer" in self._mode:
+            return False
+        if self._mode != "Auto":
+            return False
+
+        month = dt_util.now().month
+        month_winter = month >= 10 or month <= 4
+
+        outdoor_temp = None
+        if self._outdoor_sensor:
+            outdoor_state = self.hass.states.get(self._outdoor_sensor)
+            if outdoor_state and outdoor_state.state not in (STATE_UNAVAILABLE, STATE_UNKNOWN):
+                try:
+                    outdoor_temp = float(outdoor_state.state)
+                except (TypeError, ValueError):
+                    outdoor_temp = None
+
+        if outdoor_temp is None:
+            return month_winter
+
+        if self._auto_is_winter is None:
+            self._auto_is_winter = outdoor_temp < 20
+            self._auto_pending_is_winter = None
+            self._auto_pending_since = None
+            return self._auto_is_winter
+
+        desired = self._auto_is_winter
+        if self._auto_is_winter and outdoor_temp >= 21:
+            desired = False
+        elif (not self._auto_is_winter) and outdoor_temp <= 19:
+            desired = True
+
+        now = dt_util.utcnow()
+        if desired != self._auto_is_winter:
+            if self._auto_pending_is_winter != desired:
+                self._auto_pending_is_winter = desired
+                self._auto_pending_since = now
+                return self._auto_is_winter
+            if self._auto_pending_since and (now - self._auto_pending_since) >= timedelta(minutes=3):
+                self._auto_is_winter = desired
+                self._auto_pending_is_winter = None
+                self._auto_pending_since = None
+        else:
+            self._auto_pending_is_winter = None
+            self._auto_pending_since = None
+
+        return self._auto_is_winter
 
     @property
     def entry_id(self):
